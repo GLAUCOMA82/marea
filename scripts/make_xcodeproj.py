@@ -3,7 +3,7 @@
 import hashlib, pathlib
 def ID(s): return hashlib.md5(s.encode()).hexdigest()[:24].upper()
 srcs = [("ios/main.mm","sourcecode.cpp.objcpp"),("src/engine.cpp","sourcecode.cpp.cpp"),("src/analysis.cpp","sourcecode.cpp.cpp"),("src/core.mm","sourcecode.cpp.objcpp"),("src/server.mm","sourcecode.cpp.objcpp"),("src/midi_input.mm","sourcecode.cpp.objcpp")]
-res = [("ios/Assets.xcassets","folder.assetcatalog"),("web","folder")]
+res = [("ios/Assets.xcassets","folder.assetcatalog"),("web","folder"),("ios/PrivacyInfo.xcprivacy","text.xml")]
 fws = ["AudioToolbox","AVFoundation","CoreAudio","CoreGraphics","CoreImage","CoreMIDI","Foundation","ImageIO","UIKit","WebKit"]
 fr = []
 bf = []
@@ -17,7 +17,7 @@ for f in fws:
     fr.append(f'{ID("fw"+f)} = {{isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = {f}.framework; path = System/Library/Frameworks/{f}.framework; sourceTree = SDKROOT; }};')
     bf.append(f'{ID("bfw"+f)} = {{isa = PBXBuildFile; fileRef = {ID("fw"+f)}; }};')
 lst = lambda items: ", ".join(items)
-settings = """ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CLANG_CXX_LANGUAGE_STANDARD = "c++20"; CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = TEAMID; GCC_OPTIMIZATION_LEVEL = 3; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ios/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = com.francisco.marea; PRODUCT_NAME = Marea; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; ENABLE_BITCODE = NO; ENABLE_USER_SCRIPT_SANDBOXING = NO; OTHER_CPLUSPLUSFLAGS = "$(inherited) -Wno-deprecated-declarations -Wno-deprecated-anon-enum-enum-conversion";"""
+settings = """ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CLANG_CXX_LANGUAGE_STANDARD = "c++20"; CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = TEAMID; GCC_OPTIMIZATION_LEVEL = 3; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ios/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = BUNDLEID; MARKETING_VERSION = MKTVER; CURRENT_PROJECT_VERSION = BUILDNUM; PRODUCT_NAME = Marea; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; ENABLE_BITCODE = NO; ENABLE_USER_SCRIPT_SANDBOXING = NO; OTHER_CPLUSPLUSFLAGS = "$(inherited) -Wno-deprecated-declarations -Wno-deprecated-anon-enum-enum-conversion";"""
 pbx = f"""// !$*UTF8*$!
 {{ archiveVersion = 1; classes = {{}}; objectVersion = 56; objects = {{
 {chr(10).join(bf)}
@@ -44,4 +44,11 @@ if not team and pathlib.Path("local.env").exists():
     for line in pathlib.Path("local.env").read_text().splitlines():
         if line.startswith("MAREA_TEAM="): team = line.split("=", 1)[1].strip()
 if not team: raise SystemExit("Set MAREA_TEAM (your Apple team ID) in local.env or the environment.")
+# Bundle ID from MAREA_BUNDLE / local.env, version and build number from ios/VERSION ("1.0 1").
+bundle = os.environ.get("MAREA_BUNDLE")
+if not bundle and pathlib.Path("local.env").exists():
+    for line in pathlib.Path("local.env").read_text().splitlines():
+        if line.startswith("MAREA_BUNDLE="): bundle = line.split("=", 1)[1].strip()
+mkt, build = pathlib.Path("ios/VERSION").read_text().split()
+pbx = pbx.replace("BUNDLEID", bundle or "com.francisco.marea").replace("MKTVER", mkt).replace("BUILDNUM", build)
 pathlib.Path("Marea.xcodeproj/project.pbxproj").write_text(pbx.replace("TEAMID", team))

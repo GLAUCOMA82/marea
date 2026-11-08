@@ -47,6 +47,8 @@ MAREA_DEVICE=<iPad UDID from: xcrun devicectl list devices>
 MAREA_TEAM=<your Apple developer team ID>
 ```
 
+For the App Store build, `./release-ipad.sh` archives Marea, raises the build number in `ios/VERSION` and uploads it to App Store Connect. It needs a paid developer account and `MAREA_BUNDLE` in `local.env`. Listing text and screenshots are in `docs/appstore/`.
+
 Then connect the iPad and run:
 
 ```bash

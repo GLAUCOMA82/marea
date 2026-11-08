@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Marea collects no data and does no tracking. The only listed API it uses is the system clock
+     (mach_absolute_time) to time MIDI clock against the audio, which is reason 35F9.1. -->
+<plist version="1.0"><dict>
+<key>NSPrivacyTracking</key><false/>
+<key>NSPrivacyTrackingDomains</key><array/>
+<key>NSPrivacyCollectedDataTypes</key><array/>
+<key>NSPrivacyAccessedAPITypes</key><array>
+  <dict>
+    <key>NSPrivacyAccessedAPIType</key><string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+    <key>NSPrivacyAccessedAPITypeReasons</key><array><string>35F9.1</string></array>
+  </dict>
+</array>
+</dict></plist>

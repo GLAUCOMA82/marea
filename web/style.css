@@ -360,3 +360,4 @@ button,.tool,.tbtn,.patbtn,.smallbtn,.mini,.dbtn,.flag,.modebtn,.pbtn,.chtool,.r
 .fire{width:152px;height:152px;aspect-ratio:auto}
 .perfcol{width:152px;height:152px;aspect-ratio:auto;grid-template-columns:74px 74px;grid-template-rows:74px 74px}
 .perf{flex:none}
+.enctools>.tool,.enctools>.recbtn{padding:0 2px}

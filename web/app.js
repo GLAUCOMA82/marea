@@ -23,7 +23,7 @@ function setTheme(t) {
   themeCache = {};
   try { localStorage.setItem('marea.theme', t); } catch (e) {}
   if (window.onThemeChange) window.onThemeChange();
-  if (window.M && M.onTheme) M.onTheme.forEach(f => f());
+  if (typeof M !== "undefined" && M.onTheme) M.onTheme.forEach(f => f());
 }
 try { const t = localStorage.getItem('marea.theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 
