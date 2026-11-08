@@ -2,6 +2,8 @@
 
 A hands-on rhythm, bass and dub instrument for Ableton Live, the Mac and the iPad. Black screens, thin line drawings, dot-matrix numbers and big square buttons, so you can play it instead of programming it.
 
+If Marea is useful to you, you can buy me a coffee: [paypal.me/paymepleeez](https://paypal.me/paymepleeez)
+
 ![The DUB page: siren and tape echo](docs/images/dub-dark.png)
 
 | | |
@@ -162,3 +164,7 @@ All sounds are synthesized by this code, and the panel is an original design. No
 - SOUND on the keyboard plays the selected lane, pad or slice chromatically and leaves it in that key. KEY 0 resets it.
 - The display in the header's BPM cell shows `OUT n MS`: what the current audio output adds. Bluetooth headphones add most of the delay you hear and nothing in an app can remove it.
 - On iPad, `ios/main.mm` plays keys and pads straight from the native touch (`InstantTouch`); `Core::instantHit` drops the page's copy of the same press.
+
+## Support
+
+Marea is free. If you enjoy it and want to help keep it going, donations are welcome at [paypal.me/paymepleeez](https://paypal.me/paymepleeez).
