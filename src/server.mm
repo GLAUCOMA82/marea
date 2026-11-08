@@ -194,7 +194,12 @@ std::string Server::fullSteps() {
 std::string Server::helloJson() {
     Engine& e = core_.engine;
     std::ostringstream os;
-    os << "{\"hello\":1,\"host\":" << jsonStr(core_.hostName) << ",\"url\":" << jsonStr(urlForLAN(port_, core_.token())) << ",\"params\":[";
+#ifdef MAREA_STORE
+    const int store = 1;   // App Store build: no personal sound kits
+#else
+    const int store = 0;
+#endif
+    os << "{\"hello\":1,\"store\":" << store << ",\"host\":" << jsonStr(core_.hostName) << ",\"url\":" << jsonStr(urlForLAN(port_, core_.token())) << ",\"params\":[";
     bool first = true;
     for (auto& p : e.params.all()) {
         os << (first ? "" : ",") << "{\"i\":" << p.id << ",\"k\":" << jsonStr(p.key) << ",\"n\":" << jsonStr(p.name) << ",\"d\":" << p.def << ",\"s\":" << p.steps << ",\"v\":" << p.get() << "}";

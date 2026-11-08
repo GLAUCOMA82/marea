@@ -532,6 +532,8 @@ function LibPage() {
   synth.setAttribute('aria-label', 'Use Marea\'s own synthesized sounds'); rid.setAttribute('aria-label', 'Use your Riddim sounds on the lanes and pads');
   press(synth, () => send('kit synth')); press(rid, () => { send('kit riddim'); showToast('Loading your Riddim sounds…', 2000); });
   side.append(synth, rid, el('div', 't', 'SONG'));
+  // The RIDDIM kit is for personal installs only; the App Store version has just Marea's own sounds.
+  M.onHello.push(() => { rid.style.display = M.store ? 'none' : ''; });
   const sv = el('button', 'tool', 'SAVE'), op = el('button', 'tool', 'OPEN'), un = el('button', 'tool', 'UNDO LOAD');
   press(sv, openSave); press(op, openSongs); press(un, () => { send('undo'); showToast('Back to what you had', 2000); });
   side.append(sv, op, un);
@@ -1126,7 +1128,7 @@ function SoundBrowser(onLoad) {
     if (saved) { go(saved); return; }
     const r = roots[0]; if (!r) return;
     const q = await (await fetch(`/browse?k=${TOKEN}&path=${encodeURIComponent(r)}`)).json();
-    go(q.dirs && q.dirs.includes('Riddim') ? r + '/Riddim' : r);
+    go(!M.store && q.dirs && q.dirs.includes('Riddim') ? r + '/Riddim' : r);
   });
   return b;
 }

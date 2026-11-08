@@ -119,7 +119,12 @@ void Core::command(const std::string& line) {
     else if (c == "lanesynth") { int t; if ((is >> t) && t >= 0 && t < Engine::kTracks) clearLane(t); }
     else if (c == "kit") {
         std::string k; is >> k;
-        if (k == "riddim") { std::string err; if (!loadRiddimKit(&err)) { recError_ = err; recVersion++; } }
+        // Your own Riddim pack, read from disk. The App Store version never loads it.
+        bool riddim = k == "riddim";
+#ifdef MAREA_STORE
+        riddim = false;
+#endif
+        if (riddim) { std::string err; if (!loadRiddimKit(&err)) { recError_ = err; recVersion++; } }
         else useSynthKit();
     }
     else if (c == "save") { std::string n; std::getline(is, n); if (!n.empty() && n[0] == ' ') n.erase(0, 1); saveProject(n); }
@@ -470,6 +475,11 @@ void Core::useSynthKit() {
 }
 // Your own Riddim selection, read from disk. Nothing from it is stored inside Marea.
 bool Core::loadRiddimKit(std::string* err) {
+#ifdef MAREA_STORE
+    // The App Store version doesn't know about personal sound packs at all.
+    if (err) *err = "Not available in this version.";
+    return false;
+#else
     NSString* h = NSHomeDirectory();
     NSString* root = nil;
     for (NSString* c in @[@"Desktop/music/Selection EP-40 Riddim/Categorised", @"Documents/Riddim/Categorised", @"Documents/Riddim"]) {
@@ -496,6 +506,7 @@ bool Core::loadRiddimKit(std::string* err) {
     for (int i = 0; i < 24; i++) { std::string f = find(pads[i]); if (!f.empty() && loadSampleFile(i, f)) loaded++; }
     if (!loaded && err) *err = "No matching sounds were found in your Riddim folder.";
     return loaded > 0;
+#endif
 }
 
 std::string Core::dataDir(const char* sub) {

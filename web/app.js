@@ -276,7 +276,7 @@ function connect() {
 setInterval(() => send('ping ' + performance.now().toFixed(1)), 2000);
 let built = false;
 function hello(m) {
-  M.host = m.host; M.url = m.url; M.patNames = m.patNames;
+  M.host = m.host; M.store = !!m.store; M.url = m.url; M.patNames = m.patNames;
   for (const p of m.params) { M.params[p.k] = p; M.byId[p.i] = p; }
   M.steps = m.steps; M.bs = m.bs; M.cs = m.cs; M.ps = m.ps;
   M.pads = m.pads; M.chop = m.chop; M.lanes = m.lanes; M.cn = m.cn;

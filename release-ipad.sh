@@ -16,7 +16,7 @@ python3 scripts/make_xcodeproj.py
 ARCHIVE="$PWD/build/release/Marea.xcarchive"
 rm -rf build/release; mkdir -p build/release
 xcodebuild -project Marea.xcodeproj -scheme Marea -configuration Release -sdk iphoneos \
-  -destination "generic/platform=iOS" -archivePath "$ARCHIVE" -allowProvisioningUpdates archive 2>&1 \
+  -destination "generic/platform=iOS" -archivePath "$ARCHIVE" -allowProvisioningUpdates GCC_PREPROCESSOR_DEFINITIONS='$(inherited) MAREA_STORE=1' archive 2>&1 \
   | grep -E "error:|ARCHIVE (SUCCEEDED|FAILED)" || true
 [ -d "$ARCHIVE" ] || { echo "Archive failed"; exit 1; }
 DEST=upload; [ "${1:-}" = "--no-upload" ] && DEST=export
