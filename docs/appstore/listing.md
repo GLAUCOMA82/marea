@@ -14,7 +14,7 @@ Copy these into App Store Connect when the app record is created.
 | Privacy policy URL | https://github.com/GLAUCOMA82/marea/blob/main/docs/privacy.md |
 | Data collection (App Privacy) | Data Not Collected |
 | Encryption | None (already declared in the app) |
-| Copyright | 2026 [your full name, as on your developer account] |
+| Copyright | 2026 Francisco Marín |
 
 ## Promotional text (170 max, can change any time)
 
