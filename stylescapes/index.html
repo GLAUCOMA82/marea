@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marea Stylescapes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#131315; --ink:#ececee; --dim:#8b8b94; --line:#2c2c31;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink);font-family:Jost,"Avenir Next",sans-serif}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--page);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-weight:300;font-size:22px;letter-spacing:.14em;margin:0 12px 0 0}
+.tabs{display:flex;gap:6px}
+.tabs button,.live button{font:inherit;font-size:14px;letter-spacing:.08em;background:transparent;color:var(--ink);border:1.5px solid #4a4a52;border-radius:5px;padding:7px 14px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:#111;border-color:var(--ink)}
+.tabs button[disabled]{opacity:.35;cursor:default}
+.live{margin-left:auto;display:flex;gap:6px;align-items:center}
+.live span{font-size:13px;color:var(--dim);letter-spacing:.06em;margin-right:4px}
+.live button{touch-action:none;user-select:none;-webkit-user-select:none}
+.live button.fire.on{background:#ff3b5c;border-color:#ff3b5c;color:#111}
+.live button.throw.on{background:#4f8cff;border-color:#4f8cff;color:#111}
+section{display:none;padding:24px;max-width:1500px;margin:0 auto}
+section.on{display:block}
+.intro{display:flex;gap:28px;align-items:flex-end;margin:6px 0 20px;flex-wrap:wrap}
+.intro h2{margin:0;font-weight:300;font-size:56px;line-height:1;letter-spacing:.02em}
+.intro p{margin:0;max-width:640px;color:var(--dim);font-size:16px;line-height:1.5}
+.board{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.tile{position:relative;background:#000;min-height:120px;overflow:hidden}
+.tile canvas{display:block;width:100%;height:100%}
+.tile .cap{position:absolute;left:12px;bottom:9px;font-size:11px;letter-spacing:.14em;color:#6b6e7a;pointer-events:none}
+.t-tape{grid-column:span 7;height:360px}
+.t-siren{grid-column:span 5;height:360px}
+.t-lines{grid-column:span 4;height:290px}
+.t-seq{grid-column:span 8;height:290px}
+.t-mix{grid-column:span 5;height:300px}
+.t-sys{grid-column:span 7;height:300px;padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.note{color:var(--dim);font-size:14px;line-height:1.5;margin:18px 2px 0;max-width:900px}
+@media (max-width:900px){
+  .board{grid-template-columns:1fr}
+  .board>.tile{grid-column:auto!important}
+  .t-sys{grid-template-columns:1fr;height:auto}
+  header{padding:12px 16px} section{padding:16px}
+  .intro h2{font-size:40px}
+  .live{margin-left:0}
+}
+
+/* ---------- Style 01: OLED ---------- */
+#oled,#oled .intro h2{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+#oled .intro h2{font-weight:400;font-size:48px}
+#oled .tile{border-radius:12px}
+#oled .t-sys{background:#1b1b1e}
+.sw{display:flex;gap:6px;flex-wrap:wrap}
+.sw i{display:block;width:44px;height:44px;border-radius:6px;position:relative}
+.sw i b{position:absolute;left:0;top:48px;font-style:normal;font-weight:400;font-size:10px;color:var(--dim);letter-spacing:.04em;white-space:nowrap}
+.sys h3{margin:0 0 10px;font-weight:400;font-size:11px;letter-spacing:.16em;color:var(--dim)}
+.sys .block{margin-bottom:24px}
+.o-type .big{font-weight:300;font-size:64px;line-height:.9}
+.o-type .mid{font-weight:400;font-size:18px;letter-spacing:.06em}
+.o-type .small{font-weight:400;font-size:12px;letter-spacing:.16em;color:var(--dim)}
+.o-btns{display:flex;gap:8px;flex-wrap:wrap}
+.o-btns span{font-size:12px!important;display:inline-flex;align-items:center;justify-content:center;min-width:58px;height:34px;padding:0 10px;border:1.5px solid #5d5f78;border-radius:4px;font-size:14px;letter-spacing:.08em}
+.o-btns span.on{background:#ececee;color:#111;border-color:#ececee}
+.o-btns span.r{border-color:#ff3b5c;color:#ff3b5c}
+.o-btns span.fire{width:58px;height:58px;border-radius:12px;background:#ff3b5c;border-color:#ff3b5c;color:#111;font-size:13px}
+
+/* ---------- Style 02: TECHNICAL ---------- */
+#tech{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+#tech .intro h2{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:48px;letter-spacing:-.01em}
+#tech .board{gap:0;border:1px solid #2a2a2a}
+#tech .tile{border:1px solid #2a2a2a}
+#tech .tile .cap{font-family:"IBM Plex Mono",monospace;color:#ffb000;font-size:10px;letter-spacing:.12em}
+#tech .t-sys{background:#000}
+#tech .sys h3{font-family:"IBM Plex Mono",monospace;color:#ffb000;font-size:10px;letter-spacing:.12em}
+#tech .sw i{border-radius:0}
+.x-type .big{font-size:54px;line-height:1;color:#ffb000}
+.x-type .mid{font-size:18px;letter-spacing:.06em;color:#ececee}
+.x-type .small{font-size:11px;letter-spacing:.1em;color:#3d7bff}
+.x-btns{display:flex;gap:8px;flex-wrap:wrap}
+.x-btns span{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 10px;border:1px solid currentColor;font-size:12px;letter-spacing:.06em}
+.x-btns .g{color:#2bff88}.x-btns .r{color:#ff2d2d}.x-btns .b{color:#3d7bff}.x-btns .y{color:#ffb000}
+.x-btns .solid{background:#2bff88;color:#000;border-color:#2bff88}
+.x-btns .fire{width:56px;height:56px;border-radius:10px;border:1px solid #ff2d2d;color:#ff2d2d}
+#tech .note{font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>MAREA</h1>
+  <div class="tabs" role="tablist">
+    <button class="on" data-s="oled" role="tab">01 OLED</button>
+    <button data-s="tech" role="tab">02 TECHNICAL</button>
+    <button disabled title="Later, once we find references">03 —</button>
+  </div>
+  <div class="live"><span>TRY IT</span>
+    <button class="fire" aria-label="Hold to fire the siren">HOLD FIRE</button>
+    <button class="throw" aria-label="Throw the snare into the echo">THROW</button>
+  </div>
+</header>
+
+<section id="oled" class="on">
+  <div class="intro">
+    <h2>01 OLED</h2>
+    <p>The chosen direction: black screens, thin white line drawings and signal colours (blue, green, white, red), now with monospace type, amber readouts and dot-matrix numbers. Round reels, needles and dials. Every drawing moves with the sound.</p>
+  </div>
+  <div class="board">
+    <div class="tile t-tape"><canvas data-d="oTape" aria-label="Tape echo animation"></canvas><div class="cap">TAPE ECHO</div></div>
+    <div class="tile t-siren"><canvas data-d="oSiren" aria-label="Siren animation"></canvas><div class="cap">SIREN</div></div>
+    <div class="tile t-lines"><canvas data-d="oLines" aria-label="Sound lines animation"></canvas><div class="cap">SOUND LINES</div></div>
+    <div class="tile t-seq"><canvas data-d="oSeq" aria-label="Sequencer animation"></canvas><div class="cap">SEQUENCER</div></div>
+    <div class="tile t-mix"><canvas data-d="oMix" aria-label="Mixer meters animation"></canvas><div class="cap">MIXER</div></div>
+    <div class="tile t-sys sys">
+      <div>
+        <div class="block"><h3>COLOUR</h3><div class="sw">
+          <i style="background:#000;outline:1px solid #333"><b>SCREEN</b></i><i style="background:#ececee"><b>LINE</b></i><i style="background:#5b7cfa"><b>BLUE</b></i><i style="background:#3ddc84"><b>GREEN</b></i><i style="background:#ff3b5c"><b>RED</b></i><i style="background:#ffb000"><b>AMBER</b></i>
+        </div></div>
+        <div class="block" style="margin-top:34px"><h3>CONTROLS</h3><div class="o-btns"><span class="on">PLAY</span><span>HOLD</span><span class="r">REC</span><span class="fire">FIRE</span></div></div>
+      </div>
+      <div class="o-type"><h3>TYPE · MONO + DOT MATRIX</h3><canvas id="dotnum2" width="300" height="70" style="width:300px;height:70px;max-width:100%" aria-label="Dot matrix numbers"></canvas><div class="mid">TAPE · ECHO</div><div class="small">REPEATS 04 · TIME 3/16</div></div>
+    </div>
+  </div>
+  <p class="note">The tape screen follows the OLED reel layout you shared: two reels whose pack grows and shrinks, the tape running over guides and through a head block, a counter on top and the repeats flowing along coloured tracks underneath.</p>
+</section>
+
+<section id="tech">
+  <div class="intro">
+    <h2>02 TECHNICAL</h2>
+    <p>Flat vector drawings on pure black, like plotter and vector-display graphics: wireframes, leader lines, dimension marks and labelled readouts. Monospace type with dot-matrix numbers. No glow, no scanlines, no texture.</p>
+  </div>
+  <div class="board">
+    <div class="tile t-tape"><canvas data-d="xTape" aria-label="Technical tape echo animation"></canvas><div class="cap">FIG.02 TAPE ECHO / PLAN</div></div>
+    <div class="tile t-siren"><canvas data-d="xSiren" aria-label="Technical siren and boat animation"></canvas><div class="cap">FIG.01 SIREN / VESSEL</div></div>
+    <div class="tile t-lines"><canvas data-d="xLines" aria-label="Technical sound lines animation"></canvas><div class="cap">FIG.03 SOUND / SECTIONS</div></div>
+    <div class="tile t-seq"><canvas data-d="xSeq" aria-label="Technical sequencer animation"></canvas><div class="cap">FIG.04 SEQUENCE / ROUTES</div></div>
+    <div class="tile t-mix"><canvas data-d="xMix" aria-label="Technical mixer meters animation"></canvas><div class="cap">FIG.05 LEVELS</div></div>
+    <div class="tile t-sys sys">
+      <div>
+        <div class="block"><h3>COLOUR</h3><div class="sw">
+          <i style="background:#000;outline:1px solid #333"><b>BLACK</b></i><i style="background:#ffb000"><b>AMBER</b></i><i style="background:#3d7bff"><b>BLUE</b></i><i style="background:#2bff88"><b>GREEN</b></i><i style="background:#ff2d2d"><b>RED</b></i><i style="background:#ff4fa3"><b>PINK</b></i>
+        </div></div>
+        <div class="block" style="margin-top:34px"><h3>CONTROLS</h3><div class="x-btns"><span class="solid">PLAY</span><span class="g">HOLD</span><span class="r">REC</span><span class="b">N-S ONLY</span><span class="fire">FIRE</span></div></div>
+      </div>
+      <div class="x-type"><h3>TYPE · MONO + DOT MATRIX</h3><canvas id="dotnum" width="300" height="70" style="width:300px;height:70px;max-width:100%" aria-label="Dot matrix numbers"></canvas><div class="mid">SIREN / VESSEL 01</div><div class="small">PITCH 0432 HZ · MODE SWEEP</div></div>
+    </div>
+  </div>
+  <p class="note">The siren becomes a boat on a wire-mesh sea: the horn throws rings across the water, the sea swells with the kick, and the pitch is read off the scale on the right. The tape becomes a plan drawing with measured heads, and the repeats loop back like a transit map.</p>
+</section>
+
+<script>
+// ---------- a small fake groove so every drawing has something to react to ----------
+const S = { t: 0, bpm: 92, step: -1, kick: 0, snare: 0, hat: 0, bass: 0, lvl: 0, fire: false, sirEnv: 0, sirPh: 0, throwOn: false, blips: [], spec: new Array(48).fill(0), hist: [], ch: [0, 0, 0, 0, 0, 0] };
+const PAT = {
+  kick:  [1,0,0,0, 0,0,0,0, 1,0,1,0, 0,0,0,0],
+  snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1],
+  hat:   [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,1,1,0],
+  bass:  [1,0,0,1, 0,0,1,0, 1,0,0,0, 0,1,0,0],
+  chop:  [0,1,0,0, 0,0,0,1, 0,0,0,1, 0,0,1,0],
+};
+const BASSN = [0,0,0,3, 0,0,5,0, 7,0,0,0, 0,3,0,0];
+function sim(dt) {
+  S.t += dt;
+  const st = Math.floor(S.t * S.bpm / 60 * 4) % 16;
+  if (st !== S.step) {
+    S.step = st;
+    if (PAT.kick[st]) S.kick = 1;
+    if (PAT.snare[st]) { S.snare = 1; if (S.throwOn || st === 15) S.blips.push({ x: 0, a: 1, n: 0 }); }
+    if (PAT.hat[st]) S.hat = 1;
+    if (PAT.bass[st]) S.bass = 1;
+    if (PAT.chop[st]) S.ch[4] = 1;
+  }
+  const k = Math.pow(.004, dt);
+  S.kick *= k; S.snare *= Math.pow(.002, dt); S.hat *= Math.pow(.0005, dt); S.bass *= Math.pow(.02, dt); S.ch[4] *= Math.pow(.01, dt);
+  // the siren fires on its own every few bars, or while you hold FIRE
+  const auto = (S.t % 9) > 6.2;
+  const on = S.fire || auto;
+  S.sirEnv += ((on ? 1 : 0) - S.sirEnv) * Math.min(1, dt * (on ? 14 : 3));
+  S.sirPh += dt * 1.6;
+  S.lvl = Math.min(1, S.kick * .9 + S.snare * .7 + S.bass * .5 + S.hat * .2 + S.sirEnv * .5);
+  S.ch = [S.kick, S.snare, S.hat, S.bass, S.ch[4], S.sirEnv];
+  // a pretend spectrum: kick and bass at the bottom, snare in the middle, hats and siren up top
+  for (let i = 0; i < S.spec.length; i++) {
+    const f = i / S.spec.length;
+    const v = S.kick * Math.exp(-f * 9) + S.bass * .7 * Math.exp(-Math.pow((f - .12) * 9, 2)) + S.snare * .6 * Math.exp(-Math.pow((f - .42) * 4, 2)) + S.hat * .5 * Math.exp(-Math.pow((f - .85) * 6, 2))
+      + S.sirEnv * .8 * Math.exp(-Math.pow((f - (.55 + .2 * sirVal())) * 22, 2)) + .04 * Math.random();
+    S.spec[i] += (v - S.spec[i]) * Math.min(1, dt * 18);
+  }
+  S.histT = (S.histT || 0) + dt;
+  if (S.histT > .07) { S.histT = 0; S.hist.unshift(S.spec.slice()); if (S.hist.length > 18) S.hist.pop(); }
+  const delay = 60 / S.bpm * .75;
+  S.blips = S.blips.filter(b => { b.x += dt / delay; if (b.x >= 1) { b.x -= 1; b.n++; b.a *= .62; } return b.a > .06; });
+}
+const sirVal = () => Math.sin(S.sirPh * 6.283) * .5 + .5;
+
+// ---------- drawing helpers ----------
+function fit(c) {
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = c.clientWidth, h = c.clientHeight;
+  if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+  return [c.width, c.height, dpr];
+}
+function txt(c, s, x, y, size, col, align, font, weight) {
+  c.font = `${weight || 400} ${size}px ${font || MONO}`;
+  c.fillStyle = col; c.textAlign = align || 'left'; c.textBaseline = 'alphabetic'; c.fillText(s, x, y);
+}
+const line = (c, pts) => { c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke(); };
+const circ = (c, x, y, r, fill) => { c.beginPath(); c.arc(x, y, r, 0, 6.2832); fill ? c.fill() : c.stroke(); };
+const clock = () => { const s = S.t; const m = Math.floor(s / 60), ss = Math.floor(s % 60), cs = Math.floor((s * 100) % 100); return `${m}:${String(ss).padStart(2, '0')}:${String(cs).padStart(2, '0')}`; };
+
+// ================= 01 OLED =================
+const O = { ink: '#ececee', dim: '#5d5f78', faint: '#2a2b36', blue: '#5b7cfa', green: '#3ddc84', red: '#ff3b5c', white: '#ececee' };
+const D = {};
+D.oTape = (c, W, H, p) => {
+  const u = Math.min(W / 680, H / 360);
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  const R = 92 * u, ry = 150 * u, xa = W / 2 - 205 * u, xb = W / 2 + 205 * u;
+  const spin = S.t * 2.2, pack = .5 + .35 * Math.sin(S.t * .05);
+  // counter and its ruler
+  dots(c, clock(), W / 2 - 4.6 * u * 47 / 2, 22 * u, 4.6 * u, '#ffb000', '#1c1404');
+  c.strokeStyle = O.dim; c.lineWidth = 1.5 * p;
+  for (let i = -5; i <= 5; i++) { const x = W / 2 + i * 13 * u + ((S.t * 30 * u) % (13 * u)); line(c, [[x, 80 * u], [x, (i % 5 ? 88 : 92) * u]]); }
+  c.strokeStyle = O.ink; line(c, [[W / 2, 76 * u], [W / 2, 94 * u]]);
+  // track number box
+  c.strokeStyle = O.ink; c.lineWidth = 1.5 * p; c.strokeRect(36 * u, 28 * u, 52 * u, 46 * u);
+  txt(c, '4', 62 * u, 66 * u, 38 * u, O.ink, 'center', undefined, 300);
+  const reel = (x, rot, full, spokes) => {
+    c.strokeStyle = O.ink; c.lineWidth = 2 * p; circ(c, x, ry, R);
+    // tape pack: a soft grey ring that grows and shrinks
+    c.strokeStyle = O.faint; c.lineWidth = R * .5 * full; circ(c, x, ry, R * .32 + R * .25 * full);
+    c.lineWidth = 2 * p; c.strokeStyle = O.ink;
+    if (spokes) for (let i = 0; i < 3; i++) { const a = rot + i * 2.094; line(c, [[x + Math.cos(a) * R * .48, ry + Math.sin(a) * R * .48], [x + Math.cos(a) * R * .85, ry + Math.sin(a) * R * .85]]); }
+    // hub: rings and teeth
+    circ(c, x, ry, R * .27); circ(c, x, ry, R * .17); circ(c, x, ry, R * .07);
+    for (let i = 0; i < 3; i++) { const a = rot + i * 2.094 + 1; line(c, [[x + Math.cos(a) * R * .27, ry + Math.sin(a) * R * .27], [x + Math.cos(a) * R * .34, ry + Math.sin(a) * R * .34]]); }
+  };
+  reel(xa, spin, 1 - pack, true); reel(xb, spin * .9, pack, true);
+  // loop arrow between the reels, lit while there are repeats
+  c.strokeStyle = S.blips.length ? O.ink : O.dim; c.lineWidth = 2 * p;
+  const lx = W / 2, ly = 150 * u;
+  c.beginPath(); c.moveTo(lx - 10 * u, ly - 14 * u); c.lineTo(lx + 22 * u, ly - 14 * u); c.arc(lx + 22 * u, ly, 14 * u, -1.5708, 1.5708); c.lineTo(lx - 22 * u, ly + 14 * u); c.arc(lx - 22 * u, ly, 14 * u, 1.5708, 4.71); c.stroke();
+  line(c, [[lx - 4 * u, ly - 21 * u], [lx - 11 * u, ly - 14 * u], [lx - 4 * u, ly - 7 * u]]);
+  // the tape path: off each reel, over guides, through the head block
+  const gy = 262 * u, g = [W / 2 - 230 * u, W / 2 - 150 * u, W / 2, W / 2 + 140 * u, W / 2 + 225 * u];
+  const wob = Math.sin(S.t * 9) * 1.5 * u * S.lvl;
+  c.strokeStyle = O.dim; c.lineWidth = 1.5 * p;
+  line(c, [[xa - R * .55, ry + R * .8], [g[0], gy - 12 * u + wob], [g[1], gy + wob], [g[2], gy - 6 * u], [g[3], gy + wob], [g[4], gy - 12 * u + wob], [xb + R * .5, ry + R * .82]]);
+  c.strokeStyle = O.ink; c.lineWidth = 2 * p;
+  c.fillStyle = '#000';
+  [[g[0], gy - 12 * u, 7], [g[4], gy - 12 * u, 7]].forEach(([x, y, r]) => { c.beginPath(); c.arc(x, y, r * u, 0, 7); c.fill(); c.stroke(); });
+  c.beginPath(); c.arc(g[1], gy, 11 * u, 0, 7); c.fill(); c.stroke(); circ(c, g[1], gy, 3 * u, true);
+  c.fillStyle = O.ink; c.beginPath(); c.arc(g[1], gy, 3 * u, 0, 7); c.fill();
+  c.fillStyle = '#000'; c.beginPath(); c.arc(g[3], gy, 11 * u, 0, 7); c.fill(); c.stroke();
+  const ra = S.t * 4; line(c, [[g[3] - Math.cos(ra) * 7 * u, gy - Math.sin(ra) * 7 * u], [g[3] + Math.cos(ra) * 7 * u, gy + Math.sin(ra) * 7 * u]]);
+  c.fillStyle = '#000'; c.fillRect(g[2] - 16 * u, gy - 26 * u, 32 * u, 28 * u); c.strokeRect(g[2] - 16 * u, gy - 26 * u, 32 * u, 28 * u);
+  c.strokeStyle = O.ink; line(c, [[g[2], gy - 8 * u], [g[2], H - 14 * u]]);
+  // tracks underneath: what was recorded scrolls left, repeats flow along in blue
+  const ty = 302 * u, tracks = [[O.red, 0], [O.blue, 1], [O.green, 2]];
+  c.lineWidth = 2 * p;
+  for (let i = 0; i < 9; i++) { const x = ((i * 80 * u - S.t * 40 * u) % (W + 40 * u) + W + 40 * u) % (W + 40 * u) - 20 * u; c.strokeStyle = O.dim; c.lineWidth = 1.5 * p; line(c, [[x, ty - 10 * u], [x, ty - 4 * u]]); }
+  for (let k = 0; k < 40; k++) {
+    const x = ((k * 23 * u - S.t * 55 * u) % W + W) % W, tr = (k * 7) % 3, len = (14 + (k * 13) % 40) * u;
+    c.strokeStyle = tracks[tr][0]; c.globalAlpha = .35 + ((k * 5) % 7) / 10; c.lineWidth = 2.5 * p;
+    line(c, [[x, ty + tr * 6 * u], [x + len, ty + tr * 6 * u]]);
+  }
+  c.globalAlpha = 1;
+  // the echo: a green span from the head to where the repeat lands, with a dot riding it
+  S.blips.forEach(b => {
+    const x0 = g[2], x1 = g[2] + 150 * u, x = x0 + (x1 - x0) * b.x;
+    c.strokeStyle = O.green; c.globalAlpha = b.a; c.lineWidth = 2 * p; line(c, [[x0, ty - 18 * u], [x1, ty - 18 * u]]);
+    c.fillStyle = O.green; circ(c, x0, ty - 18 * u, 4 * u, true); circ(c, x, ty - 18 * u, 4.5 * u, true);
+  });
+  c.globalAlpha = 1;
+  // level: a red bar on the right with a dot that rides it
+  const fx = W - 40 * u, top = 46 * u, bot = 262 * u, lv = top + (bot - top) * (1 - Math.min(1, S.lvl));
+  c.strokeStyle = O.faint; c.lineWidth = 2 * p; line(c, [[fx, top], [fx, bot]]);
+  c.strokeStyle = O.red; line(c, [[fx, lv], [fx, bot]]);
+  c.fillStyle = O.red; circ(c, fx, top + (bot - top) * .32, 6 * u, true);
+  // tiny FX glyph on the left
+  c.strokeStyle = O.dim; c.lineWidth = 1.5 * p; c.strokeRect(36 * u, 172 * u, 30 * u, 22 * u); txt(c, 'FX', 51 * u, 189 * u, 14 * u, O.dim, 'center');
+};
+D.oSiren = (c, W, H, p) => {
+  const u = Math.min(W / 500, H / 360);
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  const env = S.sirEnv, v = sirVal();
+  // three gauges on top: pitch, rate, echo (dots coloured like signal lights)
+  const gauges = [['PITCH', .3 + v * .5 * env + .1, O.blue], ['RATE', .55, O.green], ['ECHO', .4 + S.snare * .3, O.ink]];
+  gauges.forEach(([n, val, col], i) => {
+    const gx = W / 2 + (i - 1) * 140 * u, gy = 92 * u, r = 46 * u;
+    c.strokeStyle = O.dim; c.lineWidth = 2 * p; c.beginPath(); c.arc(gx, gy, r, Math.PI, 0); c.stroke();
+    for (let k = 0; k < 7; k++) { const a = Math.PI + k / 6 * Math.PI; c.fillStyle = [O.blue, O.blue, O.green, O.green, O.ink, O.red, O.red][k]; c.globalAlpha = k / 6 <= val ? 1 : .25; circ(c, gx + Math.cos(a) * r * .8, gy + Math.sin(a) * r * .8, 3 * u, true); }
+    c.globalAlpha = 1;
+    const a = Math.PI + val * Math.PI; c.strokeStyle = col; c.lineWidth = 3 * p;
+    line(c, [[gx - r * .55, gy], [gx + Math.cos(a) * r * .55, gy + Math.sin(a) * r * .55]]);
+    c.fillStyle = col; circ(c, gx + Math.cos(a) * r * .55, gy + Math.sin(a) * r * .55, 6 * u, true); circ(c, gx - r * .55, gy, 4 * u, true);
+    txt(c, n, gx, gy + 24 * u, 12 * u, O.dim, 'center', undefined, 400);
+  });
+  // horn on the left throwing rings, the pitch drawn as it moves
+  const hx = 70 * u, hy = 238 * u;
+  c.strokeStyle = env > .05 ? O.red : O.ink; c.lineWidth = 2 * p;
+  line(c, [[hx - 24 * u, hy - 10 * u], [hx - 10 * u, hy - 10 * u], [hx + 12 * u, hy - 28 * u], [hx + 12 * u, hy + 28 * u], [hx - 10 * u, hy + 10 * u], [hx - 24 * u, hy + 10 * u], [hx - 24 * u, hy - 10 * u]]);
+  for (let k = 0; k < 4; k++) {
+    const ph = (S.t * 1.8 + k / 4) % 1, r = 24 * u + ph * 90 * u;
+    c.globalAlpha = env * (1 - ph); c.strokeStyle = O.red; c.beginPath(); c.arc(hx + 12 * u, hy, r, -.7, .7); c.stroke();
+  }
+  c.globalAlpha = 1;
+  // pitch trace
+  const x0 = 150 * u, x1 = W - 30 * u, top = 180 * u, bot = 300 * u;
+  c.strokeStyle = O.faint; c.lineWidth = 1.5 * p; line(c, [[x0, bot], [x1, bot]]);
+  c.strokeStyle = O.red; c.lineWidth = 2.5 * p; c.beginPath();
+  for (let i = 0; i <= 120; i++) {
+    const x = x0 + (x1 - x0) * i / 120, tt = S.sirPh - (120 - i) * .012;
+    const e = Math.max(0, Math.min(1, env - (120 - i) * .004));
+    const y = bot - (Math.sin(tt * 6.283) * .5 + .5) * (bot - top) * e - 2 * u;
+    i ? c.lineTo(x, y) : c.moveTo(x, y);
+  }
+  c.stroke();
+  const ey = bot - v * (bot - top) * env - 2 * u;
+  c.fillStyle = O.ink; circ(c, x1, ey, 5 * u, true);
+  dots(c, String(Math.round(320 + v * 480 * env)).padStart(3, '0'), x1 - 3.4 * u * 17 - 30 * u, top - 40 * u, 3.4 * u, '#ffb000', '#1c1404'); txt(c, 'HZ', x1, top - 17 * u, 12 * u, '#ffb000', 'right');
+};
+D.oLines = (c, W, H, p) => {
+  // the coloured waterfall: each line is a moment of sound, older ones step back and to the right
+  const u = Math.min(W / 400, H / 290);
+  const cols = ['#5b7cfa', '#6a7cf0', '#3ddc84', '#4ed39a', '#ececee', '#d9d9e0', '#ff3b5c', '#ff6a7c', '#c45bfa'];
+  const x0 = 40 * u, w = W - 120 * u, base = H - 50 * u;
+  c.lineJoin = 'round';
+  for (let k = S.hist.length - 1; k >= 0; k--) {
+    const sp = S.hist[k], ox = k * 4.5 * u, oy = -k * 6 * u;
+    c.strokeStyle = cols[k % cols.length]; c.globalAlpha = 1 - k / 22; c.lineWidth = (k ? 1.6 : 2.4) * p;
+    c.beginPath();
+    sp.forEach((v, i) => { const x = x0 + ox + w * i / (sp.length - 1), y = base + oy - Math.min(1.2, v) * 130 * u; i ? c.lineTo(x, y) : c.moveTo(x, y); });
+    c.stroke();
+  }
+  c.globalAlpha = 1;
+  c.strokeStyle = '#3ddc84'; c.lineWidth = 2 * p;
+  for (let i = 0; i < 9; i++) line(c, [[18 * u, 40 * u + i * 16 * u], [(i % 2 ? 26 : 30) * u, 40 * u + i * 16 * u]]);
+  txt(c, 'MAX', 14 * u, 28 * u, 12 * u, '#8d8fb3', 'left'); txt(c, 'MIN', 14 * u, base + 22 * u, 12 * u, '#8d8fb3', 'left');
+};
+D.oSeq = (c, W, H, p) => {
+  const u = Math.min(W / 900, H / 290);
+  const lanes = [['KICK', PAT.kick, O.blue], ['SNARE', PAT.snare, O.green], ['HAT', PAT.hat, O.ink], ['BASS', PAT.bass, O.red], ['CHOP', PAT.chop, '#c45bfa']];
+  const x0 = 110 * u, x1 = W - 30 * u, cw = (x1 - x0) / 16, y0 = 50 * u, rh = 40 * u;
+  for (let s = 0; s < 16; s++) txt(c, String(s + 1).padStart(2, '0'), x0 + cw * (s + .5), 34 * u, 13 * u, s === S.step ? O.ink : O.dim, 'center');
+  lanes.forEach(([n, pat, col], r) => {
+    const y = y0 + r * rh;
+    txt(c, n, 24 * u, y + rh * .62, 15 * u, O.dim, 'left', undefined, 400);
+    for (let s = 0; s < 16; s++) {
+      const x = x0 + cw * s + 3 * u, w = cw - 6 * u, h = rh - 12 * u;
+      if (pat[s]) {
+        const hit = s === S.step;
+        c.fillStyle = col; c.globalAlpha = hit ? 1 : .85;
+        c.beginPath(); c.roundRect(x, y + 6 * u - (hit ? 2 * u : 0), w, h + (hit ? 4 * u : 0), 3 * u); c.fill(); c.globalAlpha = 1;
+      } else {
+        c.strokeStyle = s % 4 ? O.faint : O.dim; c.lineWidth = 1.5 * p; c.beginPath(); c.roundRect(x, y + 6 * u, w, h, 3 * u); c.stroke();
+      }
+    }
+  });
+  const px = x0 + cw * (S.step + .5);
+  c.strokeStyle = O.ink; c.lineWidth = 1.5 * p; line(c, [[px, y0 - 4 * u], [px, y0 + 5 * rh + 6 * u]]);
+  c.fillStyle = O.ink; circ(c, px, y0 + 5 * rh + 10 * u, 4 * u, true);
+};
+D.oMix = (c, W, H, p) => {
+  const u = Math.min(W / 520, H / 300);
+  const ch = [['KICK', S.kick], ['SNR', S.snare], ['HAT', S.hat], ['BASS', S.bass]];
+  ch.forEach(([n, v], i) => {
+    const cx = W / 2 + (i - 1.5) * 118 * u, cy = 120 * u, r = 52 * u;
+    D.peaks = D.peaks || [0, 0, 0, 0]; D.peaks[i] = Math.max(v, D.peaks[i] * .985);
+    c.strokeStyle = O.dim; c.lineWidth = 2 * p; c.beginPath(); c.arc(cx, cy, r, Math.PI * 1.08, Math.PI * 1.92); c.stroke();
+    c.strokeStyle = O.red; c.beginPath(); c.arc(cx, cy, r, Math.PI * 1.78, Math.PI * 1.92); c.stroke();
+    txt(c, String(i + 1), cx, cy - 12 * u, 44 * u, '#3a3c4c', 'center', undefined, 300);
+    const pa = Math.PI * (1.15 + .7 * D.peaks[i]); c.fillStyle = O.red; circ(c, cx + Math.cos(pa) * r * .72, cy + Math.sin(pa) * r * .72, 4 * u, true);
+    const a = Math.PI * (1.15 + .7 * v);
+    c.strokeStyle = O.ink; c.lineWidth = 3 * p; c.lineCap = 'round'; line(c, [[cx, cy], [cx + Math.cos(a) * r * 1.05, cy + Math.sin(a) * r * 1.05]]);
+    c.fillStyle = O.ink; circ(c, cx, cy, 5 * u, true);
+    // pan: L ( | ) R
+    c.strokeStyle = O.dim; c.lineWidth = 1.5 * p; line(c, [[cx, cy + 10 * u], [cx, cy + 22 * u]]);
+    c.strokeStyle = '#8d8fb3'; c.lineWidth = 2 * p; c.beginPath(); c.arc(cx, cy + 40 * u, 13 * u, -1.1, 4.25); c.stroke(); line(c, [[cx, cy + 25 * u], [cx, cy + 40 * u]]);
+    txt(c, 'L', cx - 30 * u, cy + 48 * u, 18 * u, '#8d8fb3', 'center', undefined, 300); txt(c, 'R', cx + 30 * u, cy + 48 * u, 18 * u, '#8d8fb3', 'center', undefined, 300);
+    txt(c, n, cx, cy + 92 * u, 13 * u, O.dim, 'center');
+  });
+};
+
+// ================= 02 TECHNICAL =================
+const X = { amber: '#ffb000', orange: '#ff7a1a', blue: '#3d7bff', deep: '#1c3a99', green: '#2bff88', red: '#ff2d2d', pink: '#ff4fa3', yellow: '#ffe14d', white: '#ececee', grey: '#3a3a3a' };
+const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
+// dot-matrix digits, 5 wide by 7 tall
+const DOTS = { '0': ['01110','10001','10011','10101','11001','10001','01110'], '1': ['00100','01100','00100','00100','00100','00100','01110'], '2': ['01110','10001','00001','00010','00100','01000','11111'], '3': ['11110','00001','00001','01110','00001','00001','11110'], '4': ['00010','00110','01010','10010','11111','00010','00010'], '5': ['11111','10000','11110','00001','00001','10001','01110'], '6': ['00110','01000','10000','11110','10001','10001','01110'], '7': ['11111','00001','00010','00100','01000','01000','01000'], '8': ['01110','10001','10001','01110','10001','10001','01110'], '9': ['01110','10001','10001','01111','00001','00010','01100'], ':': ['00000','00100','00100','00000','00100','00100','00000'], '.': ['00000','00000','00000','00000','00000','01100','01100'], ' ': ['00000','00000','00000','00000','00000','00000','00000'] };
+function dots(c, s, x, y, d, col, off) {
+  for (const ch of s) {
+    const g = DOTS[ch] || DOTS[' '];
+    for (let r = 0; r < 7; r++) for (let k = 0; k < 5; k++) {
+      const on = g[r][k] === '1';
+      if (!on && !off) continue;
+      c.fillStyle = on ? col : off; c.fillRect(x + k * d, y + r * d, d * .72, d * .72);
+    }
+    x += d * 6;
+  }
+}
+// a simple 3D projection for the sea and the boat
+function proj(x, y, z, W, H, u) {
+  const camY = 3.2, camZ = -6, f = 420 * u;
+  const zz = z - camZ, yy = y - camY;
+  // tilt the camera down a little
+  const t = .3, cy = yy * Math.cos(t) + zz * Math.sin(t), cz = -yy * Math.sin(t) + zz * Math.cos(t);
+  return [W * .44 + x * f / cz, H * .56 - cy * f / cz, cz];
+}
+D.xSiren = (c, W, H, p) => {
+  const u = Math.min(W / 500, H / 360), env = S.sirEnv, v = sirVal();
+  c.lineJoin = 'round'; c.lineCap = 'round';
+  const sea = (x, z) => Math.sin(x * .9 + S.t * 1.3) * .12 + Math.sin(z * 1.3 - S.t * 1.7) * .1 + S.kick * .22 * Math.exp(-(((x + .6) * (x + .6) + (z - 3.2) * (z - 3.2)) / 6)) * Math.cos(Math.hypot(x + .6, z - 3.2) * 3 - S.t * 8);
+  // the sea: a blue wire mesh
+  c.strokeStyle = X.blue; c.lineWidth = 1 * p;
+  const NX = 22, NZ = 16;
+  for (let j = 0; j <= NZ; j++) { const z = j * .7; c.globalAlpha = 1 - j / NZ * .6; c.beginPath(); for (let i = 0; i <= NX; i++) { const x = -7 + i * 14 / NX; const [px, py] = proj(x, sea(x, z), z, W, H, u); i ? c.lineTo(px, py) : c.moveTo(px, py); } c.stroke(); }
+  for (let i = 0; i <= NX; i++) { const x = -7 + i * 14 / NX; c.globalAlpha = .7; c.beginPath(); for (let j = 0; j <= NZ; j++) { const z = j * .7; const [px, py] = proj(x, sea(x, z), z, W, H, u); j ? c.lineTo(px, py) : c.moveTo(px, py); } c.stroke(); }
+  c.globalAlpha = 1;
+  // sound rings spreading over the water from the horn
+  const bx = -.6, bz = 3.2;
+  for (let k = 0; k < 5; k++) {
+    const ph = (S.t * (.6 + v * .6) + k / 5) % 1, r = .4 + ph * 6;
+    c.strokeStyle = X.red; c.globalAlpha = env * (1 - ph); c.lineWidth = 1.3 * p; c.beginPath();
+    for (let a = 0; a <= 48; a++) { const t = a / 48 * 6.283, x = bx + Math.cos(t) * r, z = bz + Math.sin(t) * r; const [px, py] = proj(x, sea(x, z) + .02, z, W, H, u); a ? c.lineTo(px, py) : c.moveTo(px, py); }
+    c.stroke();
+  }
+  c.globalAlpha = 1;
+  // the boat: hull, cabin, mast and horn, drawn as an orange wireframe bobbing on the swell
+  const bob = sea(bx, bz), roll = Math.sin(S.t * 1.1) * .06;
+  const K = 1.3, P = (x, y, z) => { x *= K; y *= K; z *= K; const rx = x * Math.cos(roll) - y * Math.sin(roll), ry = x * Math.sin(roll) + y * Math.cos(roll); return proj(bx + rx, ry + bob + .05, bz + z, W, H, u); };
+  const L = pts => { c.beginPath(); pts.forEach((q, i) => { const [x, y] = P(...q); i ? c.lineTo(x, y) : c.moveTo(x, y); }); c.stroke(); };
+  c.strokeStyle = X.orange; c.lineWidth = 1.6 * p;
+  const deck = [[-1.4, .35, -.45], [1.0, .35, -.45], [1.7, .45, 0], [1.0, .35, .45], [-1.4, .35, .45], [-1.4, .35, -.45]];
+  const keel = [[-1.2, -.15, -.25], [.9, -.15, -.25], [1.5, .1, 0], [.9, -.15, .25], [-1.2, -.15, .25], [-1.2, -.15, -.25]];
+  L(deck); L(keel); for (let i = 0; i < 5; i++) L([deck[i], keel[i]]);
+  c.strokeStyle = X.amber;
+  const cab = [[-1.1, .35, -.3], [.1, .35, -.3], [.1, .35, .3], [-1.1, .35, .3]], roof = cab.map(([x, y, z]) => [x, y + .45, z]);
+  L([...cab, cab[0]]); L([...roof, roof[0]]); cab.forEach((q, i) => L([q, roof[i]]));
+  L([[-.5, .8, 0], [-.5, 1.9, 0]]); L([[-.9, 1.55, 0], [-.1, 1.55, 0]]);
+  // horn on the mast
+  c.strokeStyle = env > .05 ? X.red : X.amber;
+  L([[-.5, 1.9, 0], [-.2, 1.95, 0], [.05, 2.1, 0], [.05, 1.75, 0], [-.2, 1.88, 0]]);
+  const [hx, hy] = P(.05, 1.92, 0);
+  // pitch scale on the right with a marker that rides it
+  const sx = W - 70 * u, top = 46 * u, bot = H - 70 * u, my = bot - (bot - top) * (.25 + v * .6 * env + .05);
+  c.strokeStyle = X.red; c.lineWidth = 1.2 * p; line(c, [[sx, top], [sx, bot]]);
+  line(c, [[sx - 5 * u, top + 8 * u], [sx, top], [sx + 5 * u, top + 8 * u]]); line(c, [[sx - 5 * u, bot - 8 * u], [sx, bot], [sx + 5 * u, bot - 8 * u]]);
+  for (let i = 0; i <= 10; i++) { const y = top + (bot - top) * i / 10; line(c, [[sx, y], [sx + (i % 5 ? 5 : 10) * u, y]]); }
+  c.strokeStyle = X.orange; line(c, [[hx + 6 * u, hy], [sx - 8 * u, my]]);
+  c.fillStyle = X.yellow; txt(c, String(Math.round(320 + v * 480 * env)).padStart(4, '0'), sx + 14 * u, my + 6 * u, 16 * u, X.yellow, 'left', MONO, 500);
+  txt(c, 'HZ', sx + 14 * u, my + 22 * u, 10 * u, X.orange, 'left', MONO);
+  // header readouts
+  txt(c, 'VESSEL 01 : SIREN', 18 * u, 30 * u, 15 * u, X.orange, 'left', MONO, 500);
+  txt(c, 'MODE SWEEP', W - 18 * u, 26 * u, 11 * u, X.red, 'right', MONO); txt(c, env > .05 ? 'STATUS FIRING' : 'STATUS READY', W - 18 * u, 40 * u, 11 * u, env > .05 ? X.red : X.green, 'right', MONO);
+  c.strokeStyle = X.orange; c.lineWidth = 1.2 * p; line(c, [[18 * u, 56 * u], [34 * u, 56 * u]]); line(c, [[26 * u, 48 * u], [26 * u, 64 * u]]);
+  txt(c, 'RATE ' + (1.6).toFixed(2) + ' HZ', 18 * u, H - 30 * u, 11 * u, X.amber, 'left', MONO);
+};
+D.xTape = (c, W, H, p) => {
+  const u = Math.min(W / 680, H / 360);
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  const R = 78 * u, ry = 140 * u, xa = W / 2 - 200 * u, xb = W / 2 + 200 * u, spin = S.t * 2;
+  // reels as plan drawings: centre lines, a measured diameter, and the tape pack in amber
+  const reel = (x, rot, full, label) => {
+    c.strokeStyle = X.grey; c.lineWidth = 1 * p; c.setLineDash([6 * u, 4 * u, 1 * u, 4 * u]);
+    line(c, [[x - R - 14 * u, ry], [x + R + 14 * u, ry]]); line(c, [[x, ry - R - 14 * u], [x, ry + R + 14 * u]]); c.setLineDash([]);
+    c.strokeStyle = X.white; c.lineWidth = 1.3 * p; circ(c, x, ry, R);
+    c.strokeStyle = X.amber; c.lineWidth = 1 * p;
+    const rings = Math.round(4 + full * 10);
+    for (let i = 0; i < rings; i++) circ(c, x, ry, R * .3 + i * R * .045);
+    c.strokeStyle = X.white; c.lineWidth = 1.3 * p; circ(c, x, ry, R * .22);
+    for (let i = 0; i < 6; i++) { const a = rot + i * 1.047; line(c, [[x + Math.cos(a) * R * .08, ry + Math.sin(a) * R * .08], [x + Math.cos(a) * R * .22, ry + Math.sin(a) * R * .22]]); }
+    // dimension above the reel
+    c.strokeStyle = X.blue; c.lineWidth = 1 * p; const dy = ry - R - 22 * u;
+    line(c, [[x - R, dy], [x + R, dy]]); line(c, [[x - R, dy - 5 * u], [x - R, dy + 5 * u]]); line(c, [[x + R, dy - 5 * u], [x + R, dy + 5 * u]]);
+    txt(c, label, x, dy - 6 * u, 10 * u, X.blue, 'center', MONO);
+  };
+  const pack = .5 + .35 * Math.sin(S.t * .05);
+  reel(xa, spin, 1 - pack, 'SUPPLY Ø ' + Math.round(120 + 60 * (1 - pack))); reel(xb, spin * .9, pack, 'TAKE-UP Ø ' + Math.round(120 + 60 * pack));
+  // tape path in yellow, heads labelled with leader lines
+  const hy = 268 * u, recX = W / 2 - 110 * u, playX = W / 2 + 60 * u;
+  c.strokeStyle = X.yellow; c.lineWidth = 1.4 * p;
+  line(c, [[xa - R, ry], [xa - R - 10 * u, hy - 20 * u], [xa - R + 20 * u, hy], [xb + R - 20 * u, hy], [xb + R + 10 * u, hy - 20 * u], [xb + R, ry]]);
+  const head = (x, col, name) => {
+    c.strokeStyle = col; c.lineWidth = 1.3 * p; c.strokeRect(x - 12 * u, hy + 4 * u, 24 * u, 16 * u);
+    line(c, [[x - 12 * u, hy + 4 * u], [x + 12 * u, hy + 20 * u]]);
+    line(c, [[x + 12 * u, hy + 12 * u], [x + 30 * u, hy + 34 * u], [x + 46 * u, hy + 34 * u]]);
+    txt(c, name, x + 50 * u, hy + 38 * u, 11 * u, col, 'left', MONO);
+  };
+  head(recX, X.red, 'HEAD A / REC'); head(playX, X.green, 'HEAD B / PLAY');
+  // the measured distance between heads is the echo time
+  c.strokeStyle = X.white; c.lineWidth = 1 * p; const dy = hy - 22 * u;
+  line(c, [[recX, dy], [playX, dy]]); line(c, [[recX, dy - 5 * u], [recX, dy + 5 * u]]); line(c, [[playX, dy - 5 * u], [playX, dy + 5 * u]]);
+  txt(c, 'Δt 0.489 S  (3/16)', (recX + playX) / 2, dy - 6 * u, 11 * u, X.white, 'center', MONO);
+  // repeats: they leave HEAD B and loop back to HEAD A along a pink route, like a transit line
+  c.strokeStyle = X.pink; c.lineWidth = 1.6 * p; c.beginPath();
+  const ly = hy + 62 * u;
+  const rt = [[playX, hy + 20 * u], [playX + 20 * u, ly], [recX - 20 * u, ly], [recX, hy + 20 * u]];
+  c.moveTo(...rt[0]); for (let i = 1; i < rt.length; i++) c.lineTo(...rt[i]); c.globalAlpha = .55; c.stroke(); c.globalAlpha = 1;
+  // the tape is written at A, read at B, then the repeat rides the route back to A
+  S.blips.forEach((b, n) => {
+    const x = recX + (playX - recX) * b.x;
+    c.strokeStyle = b.n ? X.green : X.red; c.globalAlpha = b.a; c.lineWidth = 1.4 * p;
+    c.strokeRect(x - 5 * u, hy - 5 * u, 10 * u, 10 * u);
+    txt(c, String(b.n).padStart(2, '0'), x, hy - 10 * u, 9 * u, b.n ? X.green : X.red, 'center', MONO);
+  });
+  c.globalAlpha = 1;
+  // counter in dot matrix
+  dots(c, clock(), W / 2 - 100 * u, 20 * u, 4.2 * u, X.amber, '#1a1406');
+  txt(c, 'REPEATS ' + String(S.blips.length).padStart(2, '0'), W - 20 * u, 30 * u, 11 * u, X.green, 'right', MONO);
+  txt(c, 'WOW ±0.4%', W - 20 * u, 46 * u, 11 * u, X.blue, 'right', MONO);
+};
+D.xLines = (c, W, H, p) => {
+  // sections through the sound in a wire box, oldest at the back
+  const u = Math.min(W / 400, H / 290);
+  const bx = 60 * u, by = 40 * u, bw = W - 110 * u, bh = H - 110 * u, dx = 50 * u, dy = 40 * u;
+  c.strokeStyle = X.grey; c.lineWidth = 1 * p;
+  c.strokeRect(bx, by, bw, bh); c.strokeRect(bx + dx, by - dy * .0 + 0, bw, bh);
+  line(c, [[bx, by], [bx + dx, by]]); line(c, [[bx + bw, by], [bx + bw + dx, by]]); line(c, [[bx, by + bh], [bx + dx, by + bh]]); line(c, [[bx + bw, by + bh], [bx + bw + dx, by + bh]]);
+  c.lineJoin = 'round';
+  for (let k = S.hist.length - 1; k >= 0; k--) {
+    const sp = S.hist[k], t = k / (S.hist.length || 1), ox = dx * t, oy = 0;
+    c.strokeStyle = X.yellow; c.globalAlpha = 1 - t * .75; c.lineWidth = (k ? 1 : 1.6) * p;
+    c.beginPath();
+    sp.forEach((v, i) => { const x = bx + ox + bw * i / (sp.length - 1), y = by + bh + oy - Math.min(1.2, v) * bh * .8; i ? c.lineTo(x, y) : c.moveTo(x, y); });
+    c.stroke();
+  }
+  c.globalAlpha = 1;
+  ['3', '10', '30', '100', '300', '1000'].forEach((s, i) => txt(c, s, bx - 8 * u, by + bh - i * bh / 5 + 4 * u, 9 * u, X.blue, 'right', MONO));
+  c.save(); c.translate(16 * u, by + bh / 2); c.rotate(-Math.PI / 2); txt(c, 'LEVEL', 0, 0, 10 * u, X.green, 'center', MONO); c.restore();
+  txt(c, 'FREQ →', bx + bw / 2, H - 46 * u, 10 * u, X.green, 'center', MONO);
+};
+D.xSeq = (c, W, H, p) => {
+  // every lane is a route; hits are stations; the playhead is the train
+  const u = Math.min(W / 900, H / 290);
+  const lanes = [['KICK', PAT.kick, X.pink], ['SNARE', PAT.snare, X.red], ['HAT', PAT.hat, X.blue], ['BASS', PAT.bass, X.amber], ['CHOP', PAT.chop, X.green]];
+  const x0 = 120 * u, x1 = W - 40 * u, cw = (x1 - x0) / 16, y0 = 60 * u, rh = 40 * u;
+  c.fillStyle = '#161616'; for (let x = x0; x < x1; x += 12 * u) for (let y = 30 * u; y < H - 30 * u; y += 12 * u) c.fillRect(x, y, 1.5 * u, 1.5 * u);
+  lanes.forEach(([n, pat, col], r) => {
+    const y = y0 + r * rh;
+    txt(c, n, 24 * u, y + 4 * u, 12 * u, col, 'left', MONO, 500);
+    c.strokeStyle = col; c.lineWidth = 2.5 * p; c.lineCap = 'round';
+    // the route bends up a little into each hit
+    c.beginPath(); c.moveTo(x0 - 20 * u, y);
+    for (let s = 0; s < 16; s++) { const x = x0 + cw * (s + .5); c.lineTo(x, y); }
+    c.lineTo(x1, y); c.globalAlpha = .55; c.stroke(); c.globalAlpha = 1;
+    for (let s = 0; s < 16; s++) {
+      const x = x0 + cw * (s + .5), sz = 14 * u;
+      if (pat[s]) {
+        const hit = s === S.step;
+        c.fillStyle = '#000'; c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+        c.strokeStyle = hit ? X.white : col; c.lineWidth = 1.5 * p; c.strokeRect(x - sz / 2, y - sz / 2, sz, sz);
+        if (hit) { c.fillStyle = col; c.fillRect(x - sz / 2 + 3 * u, y - sz / 2 + 3 * u, sz - 6 * u, sz - 6 * u); }
+      }
+    }
+  });
+  const px = x0 + cw * (S.step + .5);
+  c.strokeStyle = X.white; c.lineWidth = 1 * p; line(c, [[px, 30 * u], [px, y0 + 4.6 * rh]]);
+  c.fillStyle = X.red; c.fillRect(px - 34 * u, 26 * u, 68 * u, 16 * u);
+  txt(c, 'STEP ' + String(S.step + 1).padStart(2, '0'), px, 38 * u, 10 * u, '#000', 'center', MONO, 500);
+  for (let s = 0; s < 16; s += 4) txt(c, String(s + 1).padStart(2, '0') + '.00', x0 + cw * (s + .5), H - 24 * u, 10 * u, '#8a8a8a', 'center', MONO);
+};
+D.xMix = (c, W, H, p) => {
+  const u = Math.min(W / 520, H / 300);
+  const ch = [['KICK', S.kick], ['SNR', S.snare], ['HAT', S.hat], ['BASS', S.bass], ['CHOP', S.ch[4]], ['SIREN', S.sirEnv]];
+  D.xp = D.xp || ch.map(() => 0);
+  ch.forEach(([n, v], i) => {
+    const x = 40 * u + i * 76 * u, top = 40 * u, bot = H - 60 * u, w = 16 * u;
+    D.xp[i] = Math.max(v, D.xp[i] * .98);
+    c.strokeStyle = X.green; c.lineWidth = 1.5 * p; c.strokeRect(x, top, w, bot - top);
+    c.fillStyle = X.green; const fh = (bot - top) * Math.min(1, v * .9); c.fillRect(x, bot - fh, w, fh);
+    const py = bot - (bot - top) * Math.min(1, D.xp[i] * .9); c.fillRect(x - 3 * u, py - 1 * u, w + 6 * u, 2 * u);
+    for (let k = 0; k <= 6; k++) { const y = top + (bot - top) * k / 6; c.fillRect(x + w + 6 * u, y - 1 * u, 8 * u, 2 * u); }
+    txt(c, n, x, H - 38 * u, 10 * u, X.green, 'left', MONO);
+  });
+  // a scale shared by all channels
+  ['+6', '0', '-6', '-12', '-24', '-48'].forEach((s, k) => txt(c, s, W - 14 * u, 56 * u + k * (H - 116 * u) / 5, 10 * u, X.green, 'right', MONO));
+  c.strokeStyle = X.green; c.lineWidth = 1.5 * p;
+  const tx = W - 34 * u, ty = 50 * u + (H - 110 * u) / 6;
+  line(c, [[tx - 10 * u, ty - 7 * u], [tx - 10 * u, ty + 7 * u], [tx - 22 * u, ty], [tx - 10 * u, ty - 7 * u]]);
+};
+
+// ---------- loop ----------
+const canvases = [...document.querySelectorAll('canvas[data-d]')];
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  sim(dt);
+  canvases.forEach(cv => {
+    if (!cv.offsetParent) return;
+    const [W, H, p] = fit(cv), c = cv.getContext('2d');
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
+    D[cv.dataset.d](c, W, H, p);
+  });
+  const d2 = document.getElementById('dotnum2');
+  if (d2.offsetParent) { const c = d2.getContext('2d'); c.clearRect(0, 0, 300, 70); dots(c, '92.0', 0, 6, 8, '#ffb000', '#1c1404'); dots(c, String(S.step + 1).padStart(2, '0'), 200, 6, 8, '#ececee', '#16171c'); }
+  const dn = document.getElementById('dotnum');
+  if (dn.offsetParent) { const c = dn.getContext('2d'); c.clearRect(0, 0, 300, 70); dots(c, '92.0', 0, 6, 8, '#ffb000', '#1a1406'); dots(c, String(S.step + 1).padStart(2, '0'), 200, 6, 8, '#2bff88', '#0a1a10'); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+document.querySelectorAll('.tabs button[data-s]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.s));
+}));
+const fireB = document.querySelector('.live .fire'), throwB = document.querySelector('.live .throw');
+const hold = (b, key) => {
+  b.addEventListener('pointerdown', e => { e.preventDefault(); S[key] = true; b.classList.add('on'); b.setPointerCapture(e.pointerId); if (key === 'throwOn') S.blips.push({ x: 0, a: 1, n: 0 }); });
+  const up = () => { S[key] = false; b.classList.remove('on'); };
+  b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+};
+hold(fireB, 'fire'); hold(throwB, 'throwOn');
+</script>
+</body>
+</html>

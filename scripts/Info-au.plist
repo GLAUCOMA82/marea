@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleExecutable</key><string>Marea</string>
+<key>CFBundleIdentifier</key><string>com.marea.instrument.au</string>
+<key>CFBundleName</key><string>Marea</string>
+<key>CFBundlePackageType</key><string>BNDL</string>
+<key>CFBundleShortVersionString</key><string>1.0.0</string>
+<key>CFBundleVersion</key><string>1.0.0</string>
+<key>AudioComponents</key><array><dict>
+  <key>name</key><string>Marea Instruments: Marea</string>
+  <key>description</key><string>Rhythm machine and dub section</string>
+  <key>factoryFunction</key><string>MareaFactory</string>
+  <key>manufacturer</key><string>Mrea</string>
+  <key>subtype</key><string>Mr01</string>
+  <key>type</key><string>aumu</string>
+  <key>version</key><integer>65536</integer>
+  <key>sandboxSafe</key><true/>
+  <key>tags</key><array><string>Synthesizer</string></array>
+</dict></array>
+</dict></plist>

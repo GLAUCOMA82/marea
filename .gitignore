@@ -1,0 +1,9 @@
+# Build output and generated project
+build/
+Marea.xcodeproj/
+# Your iPad UDID and Apple team ID
+local.env
+# Rendered test audio and old snapshots
+*.wav
+backup-before-grid/
+.DS_Store
